@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * Implements hook_help().
+ */
+function portfolio_help($path, $arg)
+{
+    switch ($path){
+        case 'admin/help#portfolio': {
+            $ret_val = '<h3>' .t('About'). '</h3>';
+            $ret_val.='<p>'. t('A content type to manage and make a quick template. Includes title, description, image and link to the project.').'</p>';
+            return $ret_val;
+            break;
+        }
+    }
+}

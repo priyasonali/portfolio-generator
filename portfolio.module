@@ -14,3 +14,16 @@ function portfolio_help($path, $arg)
         }
     }
 }
+
+/**
+ * Implements hook_permission().
+ */
+function portfolio_permission()
+{
+    return array(
+        'administer portfolio generator' =>  array(
+            'title' => t('Administer Potfolio Generator'),
+            'description' => t('Perform administration tasks for portfolio generator.'),
+        ),
+    );
+}

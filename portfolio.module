@@ -27,3 +27,27 @@ function portfolio_permission()
         ),
     );
 }
+
+/**
+ * Implements hook_menu().
+ */
+function portfolio_menu()
+{
+    $items['portfolio'] = array(
+    'title' => 'Portfolio',
+    'page callback' => '_portfolio_page_creator',
+    'access callback' => TRUE,
+    'menu_name' => 'main-menu',  // This is the changed line.
+    'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+}
+
+
+
+function _portfolio_page_creator(){
+    $sql_query  = 'SELECT * ';
+    $sql_query .= 'FROM {node} ';
+    $sql_query .= 'WHERE type = :type ';
+    $result = db_query($sql_query, array(':type' => 'portfolio'));
+}

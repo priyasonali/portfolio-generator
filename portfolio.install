@@ -1,0 +1,150 @@
+<?php
+// Install windfarms
+
+function portfolio_install(){
+    $t = get_t();
+    $content_type = array(
+        'type' => 'portfolio',
+        'name' => $t('Portfolio Generator'),
+        'description' => $t('A content type to add portfolio.'),
+        'title_label' => $t('Title'),
+        'base' => 'node_content',
+        'custom' => TRUE,
+    );
+    $node_type = node_type_set_defaults($content_type);
+    node_type_save($node_type);
+
+    $fields = array();
+
+    $fields['portfolio_content_fill'] = array(
+        'field_name' => 'portfolio_content_fill',
+        'type' => 'text_with_summary',
+        'cardinality' => 1,
+        'settings' => array(
+            'max_length' => 400,
+        ),
+    );
+
+    $fields['portfolio_content_link'] = array(
+        'field_name' => 'portfolio_content_link',
+        'type' => 'link_field',
+        'cardinality' => 1,
+    );
+
+    $fields['portfolio_content_image'] = array(
+        'field_name' => 'portfolio_content_image',
+        'type' => 'image',
+        'cardinality' => 1,
+    );
+
+    foreach($fields as $field){
+        field_create_field($field);
+    }
+
+    $instances = array();
+
+    $instances['portfolio_content_fill'] = array(
+        'field_name' => 'portfolio_content_fill',
+        'label' => $t('Description'),
+        'widget' => array(
+            'type' => 'text_textarea_with_summary',
+        ),
+        'required' => TRUE,
+        'settings' => array(
+            'text_processing' => 0,
+        ),
+        'display' => array(
+            'default' => array(
+                'label' => 'hidden',
+                'weight' => 100,
+            ),
+
+            'teaser' => array(
+                'label' => 'hidden',
+                'type' => 'text_trimmed',
+                'settings' => array(
+                    'trim_length' => 100,
+                ),
+            ),
+        )
+    );
+    $instances['portfolio_content_link'] = array(
+        'field_name' => 'portfolio_content_link',
+        'label' => $t('Link'),
+        'widget' => array(
+            'type' => 'link_field',
+        ),
+        'required' => FALSE,
+        'settings' => array(
+            'text_processing' => 0,
+            'attributes' => array(
+                'target' => '_blank',
+            ),
+        ),
+        'display' => array(
+            'default' => array(
+                'label' => 'hidden',
+                'weight' => 50,
+            ),
+        )
+    );
+
+    $instances['portfolio_content_image'] = array(
+        'field_name' => 'portfolio_content_image',
+        'label' => $t('Image'),
+        'widget' => array(
+            'type' => 'image_image',
+        ),
+        'required' => FALSE,
+        'settings' => array(
+            'file_extensions' => 'png jpg jpeg',
+            'file_directory' => 'portfolio',
+            'max_filesize' => '3 MB',
+            'alt_field' => 1,
+            'title_field' => 1,
+            'max_resolution' => '300x225',
+            'min_resolution' => '200x150',
+        ),
+        'display' => array(
+            'default' => array(
+                'label' => 'hidden',
+                'weight' => 30,
+            ),
+        )
+    );
+
+
+    foreach($instances as $instance){
+        $instance['entity_type'] = 'node';
+        $instance['bundle'] = 'portfolio';
+        field_create_instance($instance);
+
+    }
+}
+
+function portfolio_uninstall(){
+    $t = get_t();
+    $sql_query = 'SELECT nid ';
+    $sql_query .= 'FROM {node} ';
+    $sql_query .= 'WHERE {node}.type = :type';
+    $result = db_query($sql_query, array(':type' => 'portfolio'));
+
+    $nids = array();
+    foreach($result as $row){
+        $nids[] = $row -> nid;
+    }
+    node_delete_multiple($nids);
+    drupal_set_message($t('Portfolio contents are deleted.'));
+
+    foreach (field_info_instances('node', 'portfolio') as $field_name => $instance) {
+        field_delete_field($field_name);
+        field_delete_instance($instance);
+    }
+    drupal_set_message($t('Portfolio field and field instances removed.'));
+
+    node_type_delete('portfolio');
+    drupal_set_message($t('Portfolio Content Type removed.'));
+
+    drupal_set_message($t('Content type deleted.'));
+    field_purge_batch(1000);
+}

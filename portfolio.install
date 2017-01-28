@@ -18,7 +18,7 @@ function portfolio_install(){
 
     $fields['portfolio_content_fill'] = array(
         'field_name' => 'portfolio_content_fill',
-        'type' => 'text_with_summary',
+        'type' => 'text',
         'cardinality' => 1,
         'settings' => array(
             'max_length' => 400,
@@ -47,7 +47,7 @@ function portfolio_install(){
         'field_name' => 'portfolio_content_fill',
         'label' => $t('Description'),
         'widget' => array(
-            'type' => 'text_textarea_with_summary',
+            'type' => 'text_textarea',
         ),
         'required' => TRUE,
         'settings' => array(

@@ -35,7 +35,7 @@ function portfolio_menu()
 {
     $items['portfolio'] = array(
     'title' => 'Portfolio',
-    'page callback' => '_portfolio_page_creator',
+    'page callback' => 'portfolio_node_view',
     'access callback' => TRUE,
     'menu_name' => 'main-menu',  // This is the changed line.
     'type' => MENU_NORMAL_ITEM,
@@ -43,11 +43,51 @@ function portfolio_menu()
     return $items;
 }
 
+/**
+ * Implements hook_node_view().
+ */
+
+function portfolio_node_view($view_mode = 'teaser')
+{
+        $nodes = node_load_multiple(array(), array('type' => 'portfolio'));
+        if ($nodes != Null) {
+            foreach ($nodes as $node) {
+                $alias = url(drupal_get_path_alias('node/' . $node->nid), array('absolute' => TRUE));
+                $a[] = array(
+                    '#prefix' => '<article>',
+                    '#suffix' => '</article>',
+                    'title' => array(
+                        '#prefix' => '<h3 class="title1">',
+                        '#markup' => l($node->title, $alias),
+                        '#suffix' => '</h3>',
+                    ),
+                );
+            }
+        } else {
+            $a = t('There is no item in portfolio.');
+        }
+        dpm($a);
+
+        return $a;
+}
 
 
-function _portfolio_page_creator(){
+/**
+
+function portfolio_view($node, $view_mode, $langcode = NULL)
+{
+    $node = 'portfolio';
+    $view_mode = 'full';
+    return $node;
+}
+
+/**function _portfolio_page_creator(){
     $sql_query  = 'SELECT * ';
     $sql_query .= 'FROM {node} ';
     $sql_query .= 'WHERE type = :type ';
     $result = db_query($sql_query, array(':type' => 'portfolio'));
+
+    $fields = field_info_instances("node","portfolio");
+    dpm($fields);
 }
+ * **/

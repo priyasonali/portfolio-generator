@@ -3,3 +3,4 @@ description = A content type for generating portfolio page.
 core = 7.x
 version = 7.x-0.1-dev
 dependencies[]=link
+stylesheets[all][] = css/portfoliostyle.css

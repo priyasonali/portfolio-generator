@@ -44,45 +44,61 @@ function portfolio_menu()
 }
 
 
+
 /**
  * Implements hook_node_view().
  */
 
 function portfolio_node_view()
 {
-        $nodes = node_load_multiple(array(), array('type' => 'portfolio'));
+    drupal_add_css(drupal_get_path('module','portfolio').'/css/portfoliostyle.css');
+
+    $nodes = node_load_multiple(array(), array('type' => 'portfolio'));
         if ($nodes != Null) {
             foreach ($nodes as $node) {
                 $alias = url(drupal_get_path_alias('node/' . $node->nid), array('absolute' => TRUE));
                 $img = theme('image', array('path' => $node->portfolio_content_image[LANGUAGE_NONE][0]['uri']));
                 $text = text_summary($node->portfolio_content_fill[LANGUAGE_NONE][0]['value'], $format=NULL, $size = 250);
                 $a[] = array(
-                    '#prefix' => '<article>',
+                    '#prefix' => '<article class="row">',
                     '#suffix' => '</article>',
                     'title' => array(
                         '#prefix' => '<h2 class="title1">',
-                        '#markup' => l($node->title, $alias),
+                        '#markup' => l($node->title,$alias),
                         '#suffix' => '</h2>'.'<br>',
                     ),
-                    'pic' => array(
-                      '#markup' => $img,
-                    ),
+                );
+
+                if($img!=NULL){
+                    $a[] = array(
+                        'pic' => array(
+                            '#markup' => $img,
+                        ),
+                    );
+                }
+                $a[] = array(
                     'body' => array(
-                        '#prefix' => '<div>',
+                        '#prefix' => '<p class="lead">',
                         '#markup' => '<br>'.$text.l(t(' more..'),$alias),
-                        '#suffix' => '</div>',
-                    ),
-                    'link' => array(
-                      '#markup' => '<br>'.t('Link: ').l($node->portfolio_content_link[LANGUAGE_NONE][0]['title'],$node->portfolio_content_link[LANGUAGE_NONE][0]['url']).'<hr><br>',
+                        '#suffix' => '</p>',
                     ),
                 );
+                if($node->portfolio_content_link!=NULL){
+                    $a[] = array(
+                        'link' => array(
+                            '#markup' => '<br>'.t('Link: ').l($node->portfolio_content_link[LANGUAGE_NONE][0]['title'],$node->portfolio_content_link[LANGUAGE_NONE][0]['url']).'<hr><br>',
+                        ),
+                    );
+                } else{
+                    $a[] = array(
+                      '#markup' => '<hr><br>',
+                    );
+                }
 
             }
         } else {
             $a = t('There is no item in portfolio.');
         }
-        dpm($a);
-
         return $a;
 }
 

@@ -1,0 +1,11 @@
+.lead{
+    font-size: large;
+}
+
+#page-title{
+    display: none;
+}
+
+a{
+    text-decoration: none;
+}

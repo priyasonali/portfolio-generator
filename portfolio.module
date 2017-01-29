@@ -43,29 +43,37 @@ function portfolio_menu()
     return $items;
 }
 
+
 /**
  * Implements hook_node_view().
  */
 
-function portfolio_node_view($view_mode = 'teaser')
+function portfolio_node_view()
 {
         $nodes = node_load_multiple(array(), array('type' => 'portfolio'));
         if ($nodes != Null) {
             foreach ($nodes as $node) {
                 $alias = url(drupal_get_path_alias('node/' . $node->nid), array('absolute' => TRUE));
-                //$alias1 = image_style_url(image_style,'files/portfolio/' . $node->portfolio_content_image[LANGUAGE_NONE][0]['filename']);
+                $img = theme('image', array('path' => $node->portfolio_content_image[LANGUAGE_NONE][0]['uri']));
+                $text = text_summary($node->portfolio_content_fill[LANGUAGE_NONE][0]['value'], $format=NULL, $size = 250);
                 $a[] = array(
                     '#prefix' => '<article>',
                     '#suffix' => '</article>',
                     'title' => array(
-                        '#prefix' => '<h3 class="title1">',
+                        '#prefix' => '<h2 class="title1">',
                         '#markup' => l($node->title, $alias),
-                        '#suffix' => '</h3>',
+                        '#suffix' => '</h2>'.'<br>',
+                    ),
+                    'pic' => array(
+                      '#markup' => $img,
                     ),
                     'body' => array(
                         '#prefix' => '<div>',
-                        '#markup' => $node->portfolio_content_fill[LANGUAGE_NONE][0]['value'],
+                        '#markup' => '<br>'.$text.l(t(' more..'),$alias),
                         '#suffix' => '</div>',
+                    ),
+                    'link' => array(
+                      '#markup' => '<br>'.t('Link: ').l($node->portfolio_content_link[LANGUAGE_NONE][0]['title'],$node->portfolio_content_link[LANGUAGE_NONE][0]['url']).'<hr><br>',
                     ),
                 );
 

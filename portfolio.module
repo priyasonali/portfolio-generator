@@ -53,6 +53,7 @@ function portfolio_node_view($view_mode = 'teaser')
         if ($nodes != Null) {
             foreach ($nodes as $node) {
                 $alias = url(drupal_get_path_alias('node/' . $node->nid), array('absolute' => TRUE));
+                //$alias1 = image_style_url(image_style,'files/portfolio/' . $node->portfolio_content_image[LANGUAGE_NONE][0]['filename']);
                 $a[] = array(
                     '#prefix' => '<article>',
                     '#suffix' => '</article>',
@@ -61,7 +62,13 @@ function portfolio_node_view($view_mode = 'teaser')
                         '#markup' => l($node->title, $alias),
                         '#suffix' => '</h3>',
                     ),
+                    'body' => array(
+                        '#prefix' => '<div>',
+                        '#markup' => $node->portfolio_content_fill[LANGUAGE_NONE][0]['value'],
+                        '#suffix' => '</div>',
+                    ),
                 );
+
             }
         } else {
             $a = t('There is no item in portfolio.');
